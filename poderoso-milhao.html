@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="O Poderoso Milhão">
+<title>🌽 O Poderoso Milhão</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body { background: #fffbf0; font-family: Georgia, serif; color: #2d1a00; min-height: 100vh; }
+  #app { max-width: 600px; margin: 0 auto; }
+  .header { background: linear-gradient(135deg, #f7c948, #e8a000); padding: 20px 20px 12px; box-shadow: 0 3px 12px #e8a00044; }
+  .header-row { display: flex; justify-content: space-between; align-items: flex-start; }
+  .h1 { font-size: 22px; font-weight: 900; color: #2d1a00; letter-spacing: -0.5px; }
+  .sub { font-size: 11px; color: #6b3d00aa; margin-top: 3px; letter-spacing: 1px; }
+  .preco-box { text-align: right; }
+  .preco-label { font-size: 10px; color: #6b3d00aa; letter-spacing: 1px; }
+  #preco-input { width: 64px; text-align: right; background: transparent; border: none; font-size: 20px; font-weight: 900; color: #2d1a00; font-family: Georgia, serif; }
+  .tabs { display: flex; background: #2d1a00; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab { flex: 0 0 auto; min-width: 62px; padding: 10px 6px; border: none; cursor: pointer; font-size: 10px; font-weight: 700; transition: all 0.2s; background: transparent; color: #f7c94888; display: flex; flex-direction: column; align-items: center; gap: 2px; font-family: Georgia, serif; }
+  .tab.active { background: #f7c948; color: #2d1a00; }
+  .tab-icon { font-size: 17px; }
+  .body { padding: 16px; }
+  .card { background: #fff; border-radius: 12px; padding: 16px; margin-bottom: 12px; box-shadow: 0 2px 8px #e8a00022; border: 1px solid #f7c94844; }
+  .sec { font-size: 13px; font-weight: 900; color: #6b3d00; letter-spacing: 1px; margin-bottom: 12px; }
+  label { font-size: 11px; color: #6b3d00; font-weight: 700; letter-spacing: 1px; margin-bottom: 6px; display: block; margin-top: 10px; }
+  label:first-child { margin-top: 0; }
+  input[type=text], input[type=number], input[type=date], select, textarea {
+    width: 100%; padding: 10px 12px; border-radius: 8px; border: 1.5px solid #f7c948;
+    background: #fffbf0; font-size: 15px; color: #2d1a00; font-family: Georgia, serif;
+  }
+  textarea { min-height: 90px; resize: vertical; font-size: 14px; }
+  select { font-size: 14px; }
+  .btn { width: 100%; padding: 14px; background: linear-gradient(135deg, #f7c948, #e8a000); border: none; border-radius: 10px; font-size: 16px; font-weight: 900; color: #2d1a00; cursor: pointer; margin-top: 8px; font-family: Georgia, serif; }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .kpi-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+  .kpi-card { border-radius: 12px; padding: 14px; text-align: center; }
+  .kpi-val { font-size: 20px; font-weight: 900; color: #2d1a00; }
+  .kpi-label { font-size: 10px; color: #2d1a0099; letter-spacing: 1px; margin-top: 2px; }
+  .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #2d1a00; color: #f7c948; padding: 10px 24px; border-radius: 24px; font-size: 13px; font-weight: 700; z-index: 999; white-space: nowrap; box-shadow: 0 4px 16px #00000044; display: none; }
+  .hero { background: linear-gradient(135deg, #2d1a00, #6b3d00); border-radius: 16px; padding: 24px; margin-bottom: 12px; text-align: center; color: #f7c948; }
+  .hero-icon { font-size: 44px; }
+  .hero-title { font-size: 22px; font-weight: 900; letter-spacing: 1px; margin-top: 6px; }
+  .hero-sub { font-size: 13px; color: #f7c94899; margin-top: 4px; }
+  .hero-date { font-size: 11px; color: #f7c94866; margin-top: 2px; }
+  .bar-wrap { background: #f7c94833; border-radius: 6px; height: 8px; margin-top: 4px; }
+  .bar-fill { height: 100%; border-radius: 6px; transition: width 0.8s; }
+  .bar-ok { background: linear-gradient(90deg, #43a047, #1a7a1a); }
+  .bar-progress { background: linear-gradient(90deg, #f7c948, #e8a000); }
+  .meta-row { margin-bottom: 14px; }
+  .meta-header { display: flex; justify-content: space-between; margin-bottom: 4px; }
+  .meta-label { font-size: 12px; font-weight: 700; }
+  .meta-val { font-size: 12px; font-weight: 900; }
+  .no-meta { font-size: 11px; color: #6b3d00aa; }
+  .lucro-box { background: #fff9e0; border-radius: 10px; padding: 12px; text-align: center; margin-top: 10px; }
+  .lucro-label { font-size: 11px; color: #6b3d00aa; letter-spacing: 1px; }
+  .lucro-val { font-size: 24px; font-weight: 900; color: #e8a000; }
+  .lucro-sub { font-size: 10px; color: #6b3d00aa; }
+  .divider { border: none; border-top: 1px solid #f7c94833; margin: 10px 0; }
+  .section-sub { font-size: 11px; font-weight: 700; color: #6b3d00aa; letter-spacing: 1px; margin-bottom: 8px; }
+  .venda-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #f7c94822; }
+  .venda-info { flex: 1; }
+  .venda-ponto { font-size: 13px; font-weight: 700; }
+  .venda-detalhe { font-size: 11px; color: #6b3d00aa; }
+  .venda-qtd { font-size: 18px; font-weight: 900; color: #e8a000; margin-right: 8px; }
+  .del-btn { background: #fce4ec; border: none; border-radius: 6px; padding: 4px 8px; font-size: 13px; cursor: pointer; color: #c62828; font-weight: 700; }
+  .total-row { display: flex; justify-content: space-between; padding-top: 10px; font-weight: 900; }
+  .chart-wrap { display: flex; align-items: flex-end; gap: 6px; height: 100px; }
+  .bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; height: 100%; }
+  .bar-col-inner { flex: 1; width: 100%; display: flex; align-items: flex-end; }
+  .bar-day { width: 100%; border-radius: 4px 4px 0 0; }
+  .bar-day-label { font-size: 9px; color: #6b3d00aa; }
+  .bar-day-val { font-size: 10px; font-weight: 700; }
+  .ponto-row { margin-bottom: 12px; }
+  .ponto-header { display: flex; justify-content: space-between; margin-bottom: 4px; }
+  .ponto-name { font-size: 13px; font-weight: 700; }
+  .ponto-val { font-size: 13px; font-weight: 900; color: #e8a000; }
+  .ponto-bar-wrap { background: #f7c94833; border-radius: 6px; height: 10px; }
+  .ponto-bar { height: 100%; background: linear-gradient(90deg, #f7c948, #e8a000); border-radius: 6px; transition: width 0.8s; }
+  .acum-row { display: flex; justify-content: space-between; padding: 7px 0; border-bottom: 1px solid #f7c94833; }
+  .acum-row:last-child { border-bottom: none; }
+  .estoque-row { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .estoque-nome { flex: 1; font-size: 13px; font-weight: 700; }
+  .estoque-input { width: 76px; padding: 8px; border-radius: 8px; border: 1.5px solid #f7c948; background: #fffbf0; font-size: 15px; font-weight: 900; text-align: center; color: #2d1a00; }
+  .badge-ok { font-size: 11px; font-weight: 700; padding: 4px 8px; border-radius: 6px; background: #e8f5e9; color: #1a7a1a; }
+  .badge-low { font-size: 11px; font-weight: 700; padding: 4px 8px; border-radius: 6px; background: #fce4ec; color: #c62828; }
+  .gasto-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #f7c94822; }
+  .gasto-desc { font-size: 13px; font-weight: 700; }
+  .gasto-cat { font-size: 11px; color: #6b3d00aa; }
+  .gasto-val { font-size: 14px; font-weight: 900; color: #c62828; }
+  .hidden { display: none; }
+  .qty-input { font-size: 30px !important; text-align: center; font-weight: 900 !important; }
+  .preco-grande { font-size: 16px !important; font-weight: 900; }
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="header">
+    <div class="header-row">
+      <div>
+        <div class="h1">🌽 O Poderoso Milhão</div>
+        <div class="sub" id="header-sub">LEME · COPACABANA</div>
+      </div>
+      <div class="preco-box">
+        <div class="preco-label">PREÇO UN.</div>
+        <input type="number" id="preco-input" value="8" oninput="salvarPreco()">
+      </div>
+    </div>
+  </div>
+
+  <div class="tabs" id="tabs"></div>
+  <div class="body" id="conteudo"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const PONTOS = ["Leme","Copacabana"];
+const CLIMA = ["☀️ Sol forte","⛅ Nublado","🌧️ Chuva","💨 Ventando"];
+const MOVIMENTO = ["🔥 Cheio","😊 Bom","😐 Fraco","💀 Vazio"];
+const OPERADORES = ["Eu","Sócio","Eu + Sócio"];
+const INSUMOS = ["Milho (unid.)","Margarina (kg)","Chimichurri (g)","Lemon Pepper (g)","Edu Guedes (g)","Páprica (g)","Orégano (g)","Cebola Frita (g)","Alho Frito (g)","Queijo Minas Ralado (g)","Bacon Frito (g)","Ovo de Codorna (unid.)","Pratinhos (unid.)","Colheres Descartáveis (unid.)","Gás (kg)"];
+const ABAS = [{id:"projeto",icon:"🏆",label:"Projeto"},{id:"registrar",icon:"🌽",label:"Venda"},{id:"resumo",icon:"📊",label:"Resumo"},{id:"estoque",icon:"📦",label:"Estoque"},{id:"gastos",icon:"💸",label:"Gastos"}];
+
+function ls(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d;}catch{return d;}}
+function ss(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch{}}
+
+let abaAtual = "projeto";
+let vendas = ls("milho_vendas",[]);
+let estoque = ls("milho_estoque", Object.fromEntries(INSUMOS.map(i=>[i,0])));
+let gastos = ls("milho_gastos",[]);
+let preco = ls("milho_preco",8);
+let projeto = ls("milho_projeto",{socio1:"",socio2:"",fundacao:"",descricao:"Barraca de milho verde com toppings especiais, operando no Leme e no Calçadão de Copacabana.",metaVendasDia:"",metaLucroDia:"",metaVendasMes:"",metaLucroMes:"",anotacoes:""});
+
+document.getElementById("preco-input").value = preco;
+
+function salvarPreco(){
+  preco = parseFloat(document.getElementById("preco-input").value)||8;
+  ss("milho_preco",preco);
+  renderConteudo();
+}
+
+function hoje(){return new Date().toISOString().slice(0,10);}
+function fmtData(d){return new Date(d+"T12:00:00").toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit"});}
+function fmtReal(v){return "R$ "+Number(v).toLocaleString("pt-BR",{minimumFractionDigits:2});}
+function escQ(s){return String(s).replace(/'/g,"&#39;").replace(/"/g,"&quot;");}
+
+function flash(m){
+  const t=document.getElementById("toast");
+  t.textContent=m; t.style.display="block";
+  setTimeout(()=>t.style.display="none",2500);
+}
+
+function calculos(){
+  const hj = hoje();
+  const mes = hj.slice(0,7);
+  const vh = vendas.filter(v=>v.data===hj);
+  const totalHoje = vh.reduce((s,v)=>s+v.qtd,0);
+  const receitaHoje = totalHoje*preco;
+  const gastosHoje = gastos.filter(g=>g.data===hj).reduce((s,g)=>s+g.valor,0);
+  const lucroHoje = receitaHoje-gastosHoje;
+  const vendasMes = vendas.filter(v=>v.data.startsWith(mes)).reduce((s,v)=>s+v.qtd,0);
+  const gastosMes = gastos.filter(g=>g.data.startsWith(mes)).reduce((s,g)=>s+g.valor,0);
+  const lucroMes = vendasMes*preco-gastosMes;
+  const vendasLeme = vendas.filter(v=>v.ponto==="Leme").reduce((s,v)=>s+v.qtd,0);
+  const vendasCopa = vendas.filter(v=>v.ponto==="Copacabana").reduce((s,v)=>s+v.qtd,0);
+  const totalGeral = vendas.reduce((s,v)=>s+v.qtd,0);
+  const totalGastos = gastos.reduce((s,g)=>s+g.valor,0);
+  const lucroGeral = totalGeral*preco-totalGastos;
+  const ultDias = Array.from({length:7},(_,i)=>{
+    const d=new Date(); d.setDate(d.getDate()-(6-i));
+    const ds=d.toISOString().slice(0,10);
+    return{ds,label:fmtData(ds),qtd:vendas.filter(v=>v.data===ds).reduce((s,v)=>s+v.qtd,0)};
+  });
+  const maxDia = Math.max(...ultDias.map(d=>d.qtd),1);
+  return{vh,totalHoje,receitaHoje,gastosHoje,lucroHoje,vendasMes,gastosMes,lucroMes,vendasLeme,vendasCopa,totalGeral,totalGastos,lucroGeral,ultDias,maxDia};
+}
+
+function metaBar(label,atual,meta,fmt){
+  const pct = meta>0?Math.min((atual/meta)*100,100):0;
+  const ok = pct>=100;
+  const cor = ok?"#1a7a1a":"#e8a000";
+  const barClass = ok?"bar-ok":"bar-progress";
+  return `<div class="meta-row">
+    <div class="meta-header">
+      <span class="meta-label">${label}</span>
+      <span class="meta-val" style="color:${cor}">${fmt(atual)}${meta>0?" / "+fmt(meta):""}</span>
+    </div>
+    ${meta>0?`<div class="bar-wrap"><div class="bar-fill ${barClass}" style="width:${pct}%"></div></div>`:`<div class="no-meta">Meta não definida</div>`}
+  </div>`;
+}
+
+function selectOpts(arr,val){return arr.map(o=>`<option${o===val?" selected":""}>${escQ(o)}</option>`).join("");}
+
+// ── TABS ──
+function renderTabs(){
+  document.getElementById("tabs").innerHTML = ABAS.map(a=>`
+    <button class="tab${abaAtual===a.id?" active":""}" onclick="irAba('${a.id}')">
+      <span class="tab-icon">${a.icon}</span><span>${a.label}</span>
+    </button>`).join("");
+}
+function irAba(id){abaAtual=id;renderTabs();renderConteudo();}
+
+// ── CONTEÚDO ──
+function renderConteudo(){
+  const c = calculos();
+  const el = document.getElementById("conteudo");
+  const hj = hoje();
+
+  // Atualiza sub do header
+  const s1 = projeto.socio1, s2 = projeto.socio2;
+  document.getElementById("header-sub").textContent = (s1&&s2?s1+" & "+s2+" · ":"")+"LEME · COPACABANA";
+
+  if(abaAtual==="projeto") el.innerHTML = renderProjeto(c);
+  else if(abaAtual==="registrar") el.innerHTML = renderRegistrar(c,hj);
+  else if(abaAtual==="resumo") el.innerHTML = renderResumo(c,hj);
+  else if(abaAtual==="estoque") el.innerHTML = renderEstoque();
+  else if(abaAtual==="gastos") el.innerHTML = renderGastos(c);
+}
+
+function renderProjeto(c){
+  const p=projeto;
+  const dataFund = p.fundacao?new Date(p.fundacao+"T12:00:00").toLocaleDateString("pt-BR"):"";
+  return `
+  <div class="hero">
+    <div class="hero-icon">🌽</div>
+    <div class="hero-title">O PODEROSO MILHÃO</div>
+    ${p.socio1&&p.socio2?`<div class="hero-sub">${p.socio1} &amp; ${p.socio2}</div>`:""}
+    ${p.fundacao?`<div class="hero-date">Desde ${dataFund}</div>`:""}
+  </div>
+  <div class="card">
+    <div class="sec">👥 Os Sócios</div>
+    <div class="row2">
+      <div><label>SÓCIO 1</label><input type="text" id="p-s1" value="${escQ(p.socio1)}" placeholder="Seu nome"></div>
+      <div><label>SÓCIO 2</label><input type="text" id="p-s2" value="${escQ(p.socio2)}" placeholder="Nome do sócio"></div>
+    </div>
+    <label>FUNDAÇÃO</label><input type="date" id="p-fund" value="${escQ(p.fundacao)}">
+    <label>DESCRIÇÃO</label><textarea id="p-desc">${p.descricao}</textarea>
+  </div>
+  <div class="card">
+    <div class="sec">🎯 Metas</div>
+    <div class="row2">
+      <div><label>META VENDAS/DIA</label><input type="number" id="p-mvd" value="${escQ(p.metaVendasDia)}" placeholder="ex: 80"></div>
+      <div><label>META LUCRO/DIA (R$)</label><input type="number" id="p-mld" value="${escQ(p.metaLucroDia)}" placeholder="ex: 300"></div>
+    </div>
+    <div class="row2">
+      <div><label>META VENDAS/MÊS</label><input type="number" id="p-mvm" value="${escQ(p.metaVendasMes)}" placeholder="ex: 2000"></div>
+      <div><label>META LUCRO/MÊS (R$)</label><input type="number" id="p-mlm" value="${escQ(p.metaLucroMes)}" placeholder="ex: 6000"></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="sec">📈 Progresso do Mês</div>
+    ${metaBar("Vendas do mês",c.vendasMes,Number(p.metaVendasMes)||0,v=>v+" un.")}
+    ${metaBar("Lucro do mês",c.lucroMes,Number(p.metaLucroMes)||0,fmtReal)}
+    <hr class="divider">
+    <div class="section-sub">HOJE</div>
+    ${metaBar("Vendas hoje",c.totalHoje,Number(p.metaVendasDia)||0,v=>v+" un.")}
+    ${metaBar("Lucro hoje",c.lucroHoje,Number(p.metaLucroDia)||0,fmtReal)}
+    <div class="lucro-box">
+      <div class="lucro-label">CADA SÓCIO RECEBE NO MÊS</div>
+      <div class="lucro-val">${fmtReal(c.lucroMes/2)}</div>
+      <div class="lucro-sub">de ${fmtReal(c.lucroMes)} de lucro total</div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="sec">📝 Anotações</div>
+    <textarea id="p-anot" style="min-height:120px" placeholder="Ideias, lembretes, observações...">${p.anotacoes}</textarea>
+  </div>
+  <button class="btn" onclick="salvarProjeto()">SALVAR PROJETO</button>`;
+}
+
+function salvarProjeto(){
+  projeto = {
+    socio1: document.getElementById("p-s1").value,
+    socio2: document.getElementById("p-s2").value,
+    fundacao: document.getElementById("p-fund").value,
+    descricao: document.getElementById("p-desc").value,
+    metaVendasDia: document.getElementById("p-mvd").value,
+    metaLucroDia: document.getElementById("p-mld").value,
+    metaVendasMes: document.getElementById("p-mvm").value,
+    metaLucroMes: document.getElementById("p-mlm").value,
+    anotacoes: document.getElementById("p-anot").value,
+  };
+  ss("milho_projeto",projeto);
+  flash("✅ Projeto salvo!");
+  renderConteudo();
+}
+
+function renderRegistrar(c,hj){
+  const opts = (arr,val) => selectOpts(arr,val);
+  return `
+  <div class="card">
+    <div class="sec">🌽 Nova Venda</div>
+    <div class="row2">
+      <div><label>PONTO</label><select id="f-ponto">${opts(PONTOS,"Leme")}</select></div>
+      <div><label>OPERADOR</label><select id="f-op">${opts(OPERADORES,"Eu")}</select></div>
+    </div>
+    <label>QUANTIDADE (unidades)</label>
+    <input type="number" id="f-qtd" class="qty-input" placeholder="0">
+    <div class="row2">
+      <div><label>CLIMA</label><select id="f-clima">${opts(CLIMA,CLIMA[0])}</select></div>
+      <div><label>MOVIMENTO</label><select id="f-mov">${opts(MOVIMENTO,MOVIMENTO[0])}</select></div>
+    </div>
+    <label>DATA</label><input type="date" id="f-data" value="${hj}">
+    <button class="btn" onclick="registrarVenda()">REGISTRAR VENDA</button>
+  </div>
+  ${c.vh.length>0?`
+  <div class="card">
+    <div class="sec">📋 Registros de hoje</div>
+    ${c.vh.slice(-5).reverse().map(v=>`
+    <div class="venda-row">
+      <div class="venda-info">
+        <span class="venda-ponto">${v.ponto}</span>
+        <span class="venda-detalhe"> · ${v.operador} · ${v.clima} · ${v.movimento}</span>
+      </div>
+      <span class="venda-qtd">${v.qtd} 🌽</span>
+      <button class="del-btn" onclick="apagarVenda(${v.id})">✕</button>
+    </div>`).join("")}
+    <div class="total-row">
+      <span>Total hoje</span>
+      <span style="color:#e8a000">${c.totalHoje} un. · ${fmtReal(c.receitaHoje)}</span>
+    </div>
+  </div>`:""}`;
+}
+
+function registrarVenda(){
+  const qtd = parseFloat(document.getElementById("f-qtd").value);
+  if(!qtd||qtd<=0){flash("⚠️ Informe a quantidade!");return;}
+  vendas.push({
+    id: Date.now(),
+    ponto: document.getElementById("f-ponto").value,
+    operador: document.getElementById("f-op").value,
+    qtd,
+    clima: document.getElementById("f-clima").value,
+    movimento: document.getElementById("f-mov").value,
+    data: document.getElementById("f-data").value,
+  });
+  ss("milho_vendas",vendas);
+  document.getElementById("f-qtd").value="";
+  flash("✅ Venda registrada!");
+  renderConteudo();
+}
+
+function apagarVenda(id){
+  vendas = vendas.filter(v=>v.id!==id);
+  ss("milho_vendas",vendas);
+  flash("🗑️ Venda removida");
+  renderConteudo();
+}
+
+function renderResumo(c,hj){
+  const lucroOk = c.lucroHoje>=0;
+  return `
+  <div class="kpi-grid">
+    <div class="kpi-card" style="background:#fff9e0"><div class="kpi-val">${c.totalHoje}</div><div class="kpi-label">🌽 VENDAS HOJE</div></div>
+    <div class="kpi-card" style="background:#e8f5e9"><div class="kpi-val">${fmtReal(c.receitaHoje)}</div><div class="kpi-label">💰 RECEITA HOJE</div></div>
+    <div class="kpi-card" style="background:#fce4ec"><div class="kpi-val">${fmtReal(c.gastosHoje)}</div><div class="kpi-label">💸 GASTOS HOJE</div></div>
+    <div class="kpi-card" style="background:${lucroOk?"#e8f5e9":"#fce4ec"}"><div class="kpi-val" style="color:${lucroOk?"#1a7a1a":"#c62828"}">${fmtReal(c.lucroHoje)}</div><div class="kpi-label">📈 LUCRO HOJE</div></div>
+  </div>
+  <div class="card">
+    <div class="sec">📍 Por Ponto (acumulado)</div>
+    ${[["Leme",c.vendasLeme],["Copacabana",c.vendasCopa]].map(([p,q])=>`
+    <div class="ponto-row">
+      <div class="ponto-header"><span class="ponto-name">${p}</span><span class="ponto-val">${q} un. · ${fmtReal(q*preco)}</span></div>
+      <div class="ponto-bar-wrap"><div class="ponto-bar" style="width:${c.totalGeral>0?(q/c.totalGeral*100):0}%"></div></div>
+    </div>`).join("")}
+  </div>
+  <div class="card">
+    <div class="sec">📅 Últimos 7 dias</div>
+    <div class="chart-wrap">
+      ${c.ultDias.map(d=>`
+      <div class="bar-col">
+        <div class="bar-col-inner">
+          <div class="bar-day" style="height:${d.qtd/c.maxDia*100}%;min-height:${d.qtd>0?6:0}px;background:${d.ds===hj?"linear-gradient(180deg,#f7c948,#e8a000)":"#f7c94866"}"></div>
+        </div>
+        <span class="bar-day-label">${d.label}</span>
+        <span class="bar-day-val">${d.qtd}</span>
+      </div>`).join("")}
+    </div>
+  </div>
+  <div class="card">
+    <div class="sec">🏆 Acumulado geral</div>
+    <div class="acum-row"><span>Total vendido</span><span style="font-weight:900">${c.totalGeral} unid.</span></div>
+    <div class="acum-row"><span>Receita bruta</span><span style="font-weight:900;color:#1a7a1a">${fmtReal(c.totalGeral*preco)}</span></div>
+    <div class="acum-row"><span>Total gastos</span><span style="font-weight:900;color:#c62828">${fmtReal(c.totalGastos)}</span></div>
+    <div class="acum-row" style="border-bottom:none"><span style="font-size:14px;font-weight:900">Lucro líquido</span><span style="font-size:16px;font-weight:900;color:${c.lucroGeral>=0?"#1a7a1a":"#c62828"}">${fmtReal(c.lucroGeral)}</span></div>
+    <div class="lucro-box" style="margin-top:10px">
+      <div class="lucro-label">CADA SÓCIO ACUMULOU</div>
+      <div class="lucro-val" style="font-size:26px">${fmtReal(c.lucroGeral/2)}</div>
+    </div>
+  </div>`;
+}
+
+function renderEstoque(){
+  return `<div class="card">
+    <div class="sec">📦 Insumos em estoque</div>
+    ${INSUMOS.map(item=>`
+    <div class="estoque-row">
+      <span class="estoque-nome">${item}</span>
+      <input type="number" class="estoque-input" id="est-${escQ(item.replace(/[^a-zA-Z0-9]/g,'_'))}" value="${estoque[item]||0}">
+      <span class="${(estoque[item]||0)<=2?"badge-low":"badge-ok"}">${(estoque[item]||0)<=2?"⚠️ Baixo":"✅ OK"}</span>
+    </div>`).join("")}
+    <button class="btn" onclick="salvarEstoque()">SALVAR ESTOQUE</button>
+  </div>`;
+}
+
+function salvarEstoque(){
+  INSUMOS.forEach(item=>{
+    const id = "est-"+item.replace(/[^a-zA-Z0-9]/g,"_");
+    const el = document.getElementById(id);
+    if(el) estoque[item] = parseFloat(el.value)||0;
+  });
+  ss("milho_estoque",estoque);
+  flash("✅ Estoque atualizado!");
+  renderConteudo();
+}
+
+function renderGastos(c){
+  return `
+  <div class="card">
+    <div class="sec">💸 Registrar Gasto</div>
+    <label>DESCRIÇÃO</label><input type="text" id="g-desc" placeholder="ex: compra de milho">
+    <div class="row2">
+      <div><label>VALOR (R$)</label><input type="number" id="g-val" placeholder="0.00"></div>
+      <div><label>CATEGORIA</label><select id="g-cat">${selectOpts(["Insumos","Transporte","Equipamento","Sócio","Outros"],"Insumos")}</select></div>
+    </div>
+    <label>DATA</label><input type="date" id="g-data" value="${hoje()}">
+    <button class="btn" onclick="registrarGasto()">REGISTRAR GASTO</button>
+  </div>
+  ${gastos.length>0?`
+  <div class="card">
+    <div class="sec">📋 Últimos gastos</div>
+    ${gastos.slice(-8).reverse().map(g=>`
+    <div class="gasto-row">
+      <div><div class="gasto-desc">${g.descricao}</div><div class="gasto-cat">${g.categoria} · ${fmtData(g.data)}</div></div>
+      <span class="gasto-val">${fmtReal(g.valor)}</span>
+    </div>`).join("")}
+    <div class="total-row"><span>Total geral</span><span style="color:#c62828">${fmtReal(c.totalGastos)}</span></div>
+  </div>`:""}`;
+}
+
+function registrarGasto(){
+  const desc = document.getElementById("g-desc").value;
+  const val = parseFloat(document.getElementById("g-val").value);
+  if(!desc||!val){flash("⚠️ Preencha descrição e valor!");return;}
+  gastos.push({
+    id: Date.now(),
+    descricao: desc,
+    valor: val,
+    categoria: document.getElementById("g-cat").value,
+    data: document.getElementById("g-data").value,
+  });
+  ss("milho_gastos",gastos);
+  flash("✅ Gasto registrado!");
+  renderConteudo();
+}
+
+// Init
+renderTabs();
+renderConteudo();
+</script>
+</body>
+</html>
